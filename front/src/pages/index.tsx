@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "../styles/style.module.scss";
 import Header from "@/componets/Header";
-import TimeLine from "@/componets/Timeline";
+import Timeline from "@/componets/Timeline";
 import Post from "@/componets/Post";
 import Footer from "@/componets/Footer";
 
@@ -22,8 +22,7 @@ export default function Home() {
 
       <Header />
       <main className={styles.container}>
-        <TimeLine />
-        <Post />
+        <Timeline />
       </main>
       <Footer />
     </>

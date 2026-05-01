@@ -15,5 +15,4 @@ const signup = () => {
         </div>
     )
 };
-
 export default signup;

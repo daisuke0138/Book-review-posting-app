@@ -1,14 +1,15 @@
-import React from 'react'
-import styles from './style.module.scss';
-import Link from 'next/link';
+import React, { useEffect, useState } from "react";
+import styles from "./style.module.scss";
+import Link from "next/link";
 
-const Post = () => {
+const Post = ({ username, author, createdAt, content }: any) => {
     return (
         <div className={styles.post}>
-            <p>名前が入る予定</p>
-            <p>日付が入る予定</p>
-            <p>登録されたデータを表示</p>
+            <p>{username}</p>
+            <p>{new Date(createdAt).toLocaleString()}</p>
+            <p>{content}</p>
         </div>
     );
 };
+
 export default Post;
