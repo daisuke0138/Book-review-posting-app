@@ -11,7 +11,7 @@ const Header = () => {
                     <Link href={"/login"}>Login</Link>
                 </li>
                 <li>
-                    <Link href={"/regster"}>登録</Link>
+                    <Link href={"/signup"}>登録</Link>
                 </li>
             </ul>
         </header>

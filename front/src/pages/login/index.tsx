@@ -1,8 +1,8 @@
-import Footer from '@/componets/Footer';
-import Header from '@/componets/Header';
-import Login from '@/componets/Login';
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import Login from '@/components/Login';
 import React from 'react';
-import styles from './stlye.module.scss';
+import styles from './style.module.scss';
 
 const login = () => {
     return (
