@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./style.module.scss";
 import Link from "next/link";
-import apiClient from "@/pages/lib/apiClient";
+import apiClient from "@/lib/apiClient";
 import router, { useRouter } from "next/router";
 import { useAuth } from "@/context/auth";
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./style.module.scss";
 import Link from "next/link";
 import Button from "@mui/material/Button";
-import apiClient from "@/pages/lib/apiClient";
+import apiClient from "@/lib/apiClient";
 import { PostType } from "@/types";
 import Post from "../Post";
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./style.module.scss";
-import apiClient from "@/pages/lib/apiClient";
+import apiClient from "@/lib/apiClient";
 import router from "next/router";
 
 const SignUp = () => {
