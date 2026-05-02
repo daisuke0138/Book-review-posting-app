@@ -1,4 +1,4 @@
-import apiClient from "@/pages/lib/apiClient";
+import apiClient from "@/lib/apiClient";
 import React, { ReactNode, useContext, useEffect } from "react";
 
 interface AuthContextType {
