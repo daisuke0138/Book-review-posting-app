@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import styles from "./style.module.scss";
 import apiClient from "@/lib/apiClient";
 import TextField from "@mui/material/TextField";
@@ -16,6 +16,8 @@ import Box from "@mui/material/Box";
 
 const BRegi = () => {
   const [title, setTitle] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snackbar, setSnackbar] = useState<{
@@ -23,6 +25,17 @@ const BRegi = () => {
     message: string;
     severity: "success" | "error";
   }>({ open: false, message: "", severity: "success" });
+
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  // カメラ撮影 / ファイル選択後のハンドラ
+  const handleImageCapture = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+  };
 
   // 登録ボタン押下 -> 確認ダイアログを開く
   const handleRegisterClick = () => {
@@ -37,17 +50,28 @@ const BRegi = () => {
     setIsConfirmOpen(true);
   };
 
-  // 確認ダイアログでOKを押下 -> APIへ送信
+  // 確認ダイアログでOKを押下 -> multipart/form-data でAPIへ送信
   const handleConfirmSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await apiClient.post("/books", { title: title.trim() });
+      const formData = new FormData();
+      formData.append("title", title.trim());
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      await apiClient.post("/books", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       setSnackbar({
         open: true,
-        message: "本のタイトルを登録しました",
+        message: "本を登録しました",
         severity: "success",
       });
       setTitle("");
+      setImageFile(null);
+      setImagePreview(null);
       setIsConfirmOpen(false);
     } catch (error) {
       console.error("本の登録に失敗しました:", error);
@@ -91,6 +115,48 @@ const BRegi = () => {
           disabled={isSubmitting}
         />
 
+        {/* カメラ撮影ボタン */}
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          style={{ display: "none" }}
+          onChange={handleImageCapture}
+        />
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={() => cameraInputRef.current?.click()}
+          disabled={isSubmitting}
+          className={styles.registerForm__cameraButton}
+          fullWidth
+        >
+          カメラで撮影 / 画像を選択
+        </Button>
+
+        {/* 撮影プレビュー */}
+        {imagePreview && (
+          <Box className={styles.registerForm__preview}>
+            <img
+              src={imagePreview}
+              alt="撮影プレビュー"
+              className={styles.registerForm__previewImage}
+            />
+            <Button
+              size="small"
+              color="inherit"
+              onClick={() => {
+                setImageFile(null);
+                setImagePreview(null);
+              }}
+              className={styles.registerForm__removeImage}
+            >
+              画像を削除
+            </Button>
+          </Box>
+        )}
+
         <Button
           variant="contained"
           color="primary"
@@ -112,7 +178,7 @@ const BRegi = () => {
         <DialogTitle id="confirm-dialog-title">登録内容の確認</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            以下のタイトルで登録します。よろしいですか？
+            以下の内容で登録します。よろしいですか？
           </DialogContentText>
           <Typography
             variant="body1"
@@ -126,6 +192,25 @@ const BRegi = () => {
           >
             {title}
           </Typography>
+          {imagePreview && (
+            <Box sx={{ mt: 2, textAlign: "center" }}>
+              <img
+                src={imagePreview}
+                alt="登録画像プレビュー"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: 200,
+                  objectFit: "contain",
+                  borderRadius: 4,
+                }}
+              />
+            </Box>
+          )}
+          {!imageFile && (
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: "block" }}>
+              ※ 画像なしで登録されます
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button
