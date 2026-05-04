@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./style.module.scss";
 import apiClient from "@/lib/apiClient";
-import { BookType } from "@/types";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -10,10 +9,20 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
+// DBから取得する本のデータ型
+interface BookType {
+    id: number;
+    title: string;
+    imageUrl?: string;
+    createdAt?: string;
+}
+
 interface SearchProps {
     onBookSelect: (book: BookType | null) => void;
     selectedBook: BookType | null;
 }
+
+export type { BookType };
 
 const Search = ({ onBookSelect, selectedBook }: SearchProps) => {
     const [books, setBooks] = useState<BookType[]>([]);

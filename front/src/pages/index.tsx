@@ -5,8 +5,8 @@ import Header from "@/components/Header";
 import Timeline from "@/components/Timeline";
 import Post from "@/components/Post";
 import Search from "@/components/Search";
+import type { BookType } from "@/components/Search";
 import Footer from "@/components/Footer";
-import { BookType } from "@/types";
 
 export default function Home() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);

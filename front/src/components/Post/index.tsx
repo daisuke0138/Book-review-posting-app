@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styles from "./style.module.scss";
 import apiClient from "@/lib/apiClient";
-import { BookType } from "@/types";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
@@ -9,6 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import Typography from "@mui/material/Typography";
+import type { BookType } from "@/components/Search";
 
 interface PostProps {
     onPostSuccess?: () => void;
