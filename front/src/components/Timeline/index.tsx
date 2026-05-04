@@ -1,43 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styles from "./style.module.scss";
 import apiClient from "@/lib/apiClient";
+import { PostType, BookType } from "@/types";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
-import type { BookType } from "@/components/Search";
-
-// DBから取得する投稿者のデータ型
-interface UserType {
-    id: number;
-    username: string;
-    email?: string;
-}
-
-// DBから取得するいいねのデータ型
-interface LikeType {
-    id: number;
-    userId: number;
-    postId: number;
-    createdAt: string;
-}
-
-// DBから取得する投稿のデータ型
-interface PostType {
-    id: number;
-    content: string;
-    createdAt: string;
-    authorId: number;
-    author: UserType;
-    bookId?: number;
-    book?: BookType;
-    likes?: LikeType[];
-    _count?: {
-        likes: number;
-    };
-}
 
 interface TimelineProps {
     refreshTrigger?: number;

@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Timeline from "@/components/Timeline";
 import Post from "@/components/Post";
 import Search from "@/components/Search";
-import type { BookType } from "@/components/Search";
+import { BookType } from "@/types";
 import Footer from "@/components/Footer";
 
 export default function Home() {
