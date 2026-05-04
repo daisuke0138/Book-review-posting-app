@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import styles from "./style.module.scss";
 import apiClient from "@/lib/apiClient";
+import { BookType } from "@/types";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
+import Typography from "@mui/material/Typography";
 
 interface PostProps {
     onPostSuccess?: () => void;
+    selectedBook: BookType | null;
 }
 
-const Post = ({ onPostSuccess }: PostProps) => {
+const Post = ({ onPostSuccess, selectedBook }: PostProps) => {
     const [content, setContent] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
@@ -21,6 +24,12 @@ const Post = ({ onPostSuccess }: PostProps) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!selectedBook) {
+            setErrorMessage("本を選択してください");
+            setShowError(true);
+            return;
+        }
 
         if (!content.trim()) {
             setErrorMessage("投稿内容を入力してください");
@@ -33,6 +42,7 @@ const Post = ({ onPostSuccess }: PostProps) => {
         try {
             await apiClient.post("/posts", {
                 content: content.trim(),
+                bookId: selectedBook.id,
             });
 
             setContent("");
@@ -62,41 +72,52 @@ const Post = ({ onPostSuccess }: PostProps) => {
 
     return (
         <div className={styles.postForm}>
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    label="本の感想を投稿"
-                    placeholder="読んだ本の感想を共有しましょう..."
-                    multiline
-                    rows={4}
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    fullWidth
-                    variant="outlined"
-                    className={styles.postForm__textarea}
-                    disabled={isLoading}
-                />
-                <div className={styles.postForm__actions}>
-                    <span className={styles.postForm__charCount}>
-                        {content.length} 文字
-                    </span>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        endIcon={
-                            isLoading ? (
-                                <CircularProgress size={20} color="inherit" />
-                            ) : (
-                                <SendIcon />
-                            )
-                        }
-                        disabled={isLoading || !content.trim()}
-                        className={styles.postForm__submitBtn}
-                    >
-                        {isLoading ? "投稿中..." : "投稿する"}
-                    </Button>
+            {!selectedBook ? (
+                <div className={styles.postForm__placeholder}>
+                    <Typography variant="body1" color="textSecondary">
+                        本を選択すると感想を投稿できます
+                    </Typography>
                 </div>
-            </form>
+            ) : (
+                <form onSubmit={handleSubmit}>
+                    <Typography variant="subtitle2" className={styles.postForm__bookLabel}>
+                        「{selectedBook.title}」の感想
+                    </Typography>
+                    <TextField
+                        label="本の感想を投稿"
+                        placeholder="読んだ本の感想を共有しましょう..."
+                        multiline
+                        rows={4}
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        fullWidth
+                        variant="outlined"
+                        className={styles.postForm__textarea}
+                        disabled={isLoading}
+                    />
+                    <div className={styles.postForm__actions}>
+                        <span className={styles.postForm__charCount}>
+                            {content.length} 文字
+                        </span>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            endIcon={
+                                isLoading ? (
+                                    <CircularProgress size={20} color="inherit" />
+                                ) : (
+                                    <SendIcon />
+                                )
+                            }
+                            disabled={isLoading || !content.trim()}
+                            className={styles.postForm__submitBtn}
+                        >
+                            {isLoading ? "投稿中..." : "投稿する"}
+                        </Button>
+                    </div>
+                </form>
+            )}
 
             <Snackbar
                 open={showSuccess}

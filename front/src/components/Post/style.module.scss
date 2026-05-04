@@ -6,6 +6,17 @@
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
+    &__placeholder {
+        text-align: center;
+        padding: 24px;
+    }
+
+    &__bookLabel {
+        margin-bottom: 12px;
+        color: #1976d2;
+        font-weight: 600;
+    }
+
     &__textarea {
         margin-bottom: 12px;
 

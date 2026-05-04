@@ -28,6 +28,8 @@ export interface PostType {
     createdAt: string;
     authorId: number;
     author: UserType;
+    bookId?: number;
+    book?: BookType;
     likes?: LikeType[];
     _count?: {
         likes: number;
@@ -39,4 +41,11 @@ export interface LikeType {
     userId: number;
     postId: number;
     createdAt: string;
+}
+
+export interface BookType {
+    id: number;
+    title: string;
+    imageUrl?: string;
+    createdAt?: string;
 }

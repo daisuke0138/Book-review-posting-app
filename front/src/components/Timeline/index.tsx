@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styles from "./style.module.scss";
 import apiClient from "@/lib/apiClient";
-import { PostType } from "@/types";
+import { PostType, BookType } from "@/types";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 
 interface TimelineProps {
     refreshTrigger?: number;
+    selectedBook: BookType | null;
 }
 
 interface PostItemProps {
@@ -132,15 +133,20 @@ const PostItem = ({ post, currentUserId, onLikeToggle }: PostItemProps) => {
     );
 };
 
-const Timeline = ({ refreshTrigger }: TimelineProps) => {
+const Timeline = ({ refreshTrigger, selectedBook }: TimelineProps) => {
     const [postData, setPostdata] = useState<PostType[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
     const fetchPosts = useCallback(async () => {
+        if (!selectedBook) {
+            setPostdata([]);
+            return;
+        }
+
         setIsLoading(true);
         try {
-            const res = await apiClient.get("/get_post");
+            const res = await apiClient.get(`/get_post?bookId=${selectedBook.id}`);
             console.log(res.data, "データ取得");
             setPostdata(res.data);
         } catch (err) {
@@ -148,7 +154,7 @@ const Timeline = ({ refreshTrigger }: TimelineProps) => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [selectedBook]);
 
     const fetchCurrentUser = useCallback(async () => {
         try {
@@ -178,6 +184,16 @@ const Timeline = ({ refreshTrigger }: TimelineProps) => {
         console.log(`Post ${postId} liked: ${isLiked}`);
     };
 
+    if (!selectedBook) {
+        return (
+            <div className={styles.timeline__empty}>
+                <Typography variant="body1">
+                    本を選択すると、その本の感想が表示されます
+                </Typography>
+            </div>
+        );
+    }
+
     if (isLoading) {
         return (
             <div className={styles.timeline__loading}>
@@ -191,7 +207,7 @@ const Timeline = ({ refreshTrigger }: TimelineProps) => {
         return (
             <div className={styles.timeline__empty}>
                 <Typography variant="body1">
-                    まだ投稿がありません。最初の投稿をしてみましょう!
+                    「{selectedBook.title}」の感想はまだありません。最初の投稿をしてみましょう!
                 </Typography>
             </div>
         );
@@ -200,7 +216,7 @@ const Timeline = ({ refreshTrigger }: TimelineProps) => {
     return (
         <div className={styles.timeline}>
             <Typography variant="h6" className={styles.timeline__title}>
-                みんなの感想
+                「{selectedBook.title}」の感想
             </Typography>
             {postData.map((item) => (
                 <PostItem
