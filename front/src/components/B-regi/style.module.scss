@@ -1,0 +1,42 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    min-height: calc(100vh - 120px);
+
+    @media (min-width: 768px) {
+        padding: 40px 24px;
+    }
+}
+
+.registerForm {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    @media (min-width: 768px) {
+        padding: 32px;
+    }
+
+    &__title {
+        margin-bottom: 24px;
+        font-weight: 600;
+        color: #333;
+        text-align: center;
+    }
+
+    &__input {
+        margin-bottom: 24px;
+
+        :global(.MuiOutlinedInput-root) {
+            border-radius: 8px;
+        }
+    }
+
+    &__button {
+        padding: 12px 24px;
+        font-size: 1rem;
+        border-radius: 8px;
+    }
+}

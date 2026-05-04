@@ -1,13 +1,55 @@
-.post {
-    margin-top: 50px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 10px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+.postForm {
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-    p {
-        font-size: 16px;
-        text-align: left;
-        line-height: 1.6;
+    &__placeholder {
+        text-align: center;
+        padding: 24px;
+    }
+
+    &__bookLabel {
+        margin-bottom: 12px;
+        color: #1976d2;
+        font-weight: 600;
+    }
+
+    &__textarea {
+        margin-bottom: 12px;
+
+        :global(.MuiOutlinedInput-root) {
+            border-radius: 8px;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__charCount {
+        font-size: 14px;
+        color: #666;
+    }
+
+    &__submitBtn {
+        border-radius: 20px;
+        padding: 8px 24px;
+        text-transform: none;
+        font-weight: 600;
+    }
+}
+
+// レスポンシブ対応（PC）
+@media (min-width: 768px) {
+    .postForm {
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 24px;
     }
 }
