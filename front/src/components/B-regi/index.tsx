@@ -39,12 +39,15 @@ const BRegi = () => {
             const options = {
                 maxSizeMB: 0.5,
                 maxWidthOrHeight: 800,
-                useWebWorker: true,
+                useWebWorker: false,
             };
 
             const compressedFile = await imageCompression(file, options);
 
+            // 圧縮後のファイルをセット
             setImageFile(compressedFile);
+
+            // プレビューURL生成
             const previewUrl = URL.createObjectURL(compressedFile);
             setImagePreview(previewUrl);
         } catch (error) {
