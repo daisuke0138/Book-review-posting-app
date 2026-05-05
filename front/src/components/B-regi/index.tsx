@@ -13,6 +13,7 @@ import Snackbar from "@mui/material/Snackbar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import imageCompression from 'browser-image-compression';
 
 const BRegi = () => {
     const [title, setTitle] = useState("");
@@ -28,13 +29,32 @@ const BRegi = () => {
 
     const cameraInputRef = useRef<HTMLInputElement>(null);
 
-    // カメラ撮影 / ファイル選択後のハンドラ
-    const handleImageCapture = (e: ChangeEvent<HTMLInputElement>) => {
+    // カメラ撮影 / ファイル選択後のハンドラ 画像圧縮
+    const handleImageCapture = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        setImageFile(file);
-        const previewUrl = URL.createObjectURL(file);
-        setImagePreview(previewUrl);
+
+        try {
+            // 圧縮オプション: 0.5MB以下、横幅最大800pxに圧縮
+            const options = {
+                maxSizeMB: 0.5,
+                maxWidthOrHeight: 800,
+                useWebWorker: true,
+            };
+
+            const compressedFile = await imageCompression(file, options);
+
+            setImageFile(compressedFile);
+            const previewUrl = URL.createObjectURL(compressedFile);
+            setImagePreview(previewUrl);
+        } catch (error) {
+            console.error("画像圧縮エラー:", error);
+            setSnackbar({
+                open: true,
+                message: "画像の圧縮に失敗しました",
+                severity: "error",
+            });
+        }
     };
 
     // 登録ボタン押下 -> 確認ダイアログを開く
