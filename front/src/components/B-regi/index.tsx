@@ -83,9 +83,11 @@ const BRegi = () => {
                 formData.append("image", imageFile);
             }
 
-            await apiClient.post("/books", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            await apiClient.post("/books", formData,
+                // {
+                // headers: { "Content-Type": "multipart/form-data" },
+                // }
+            );
 
             setSnackbar({
                 open: true,
