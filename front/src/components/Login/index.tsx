@@ -6,31 +6,37 @@ import router, { useRouter } from "next/router";
 import { useAuth } from "@/context/auth";
 
 const Login = () => {
-    // useState　各フォームの入力を保持します🤗
-    const [email, setEmail] = useState("");
+    const [libraryCardNumber, setLibraryCardNumber] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     const router = useRouter();
-
-    // 呼び出し追記
     const { login } = useAuth();
 
-    // 送信の処理を記述します🤗
+    // 図書カード番号のバリデーション（6桁の数字のみ）
+    const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (/^\d{0,6}$/.test(value)) {
+            setLibraryCardNumber(value);
+            setError("");
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        //新規登録を行うAPIを叩く
+        if (libraryCardNumber.length !== 6) {
+            setError("図書カード番号は6桁の数字で入力してください");
+            return;
+        }
+
         try {
             const response = await apiClient.post("/auth/login", {
-                email,
+                libraryCardNumber,
                 password,
             });
 
             const token = response.data.token;
-            console.log(token);
-
-            // ここで使用する
             login(token);
 
             router.push("/");
@@ -44,19 +50,25 @@ const Login = () => {
             <h3 className={styles.form__title}>ログイン</h3>
 
             <div className={styles.form__item}>
-                <label htmlFor="">メールアドレス</label>
+                <label htmlFor="libraryCardNumber">図書カード番号（6桁）</label>
                 <input
+                    id="libraryCardNumber"
                     type="text"
-                    value={email}
-                    placeholder="メールアドレスを入力してください"
-                    onChange={(e) => setEmail(e.target.value)}
+                    inputMode="numeric"
+                    pattern="\d{6}"
+                    maxLength={6}
+                    value={libraryCardNumber}
+                    placeholder="123456"
+                    onChange={handleCardNumberChange}
                 />
+                {error && <span className={styles.form__error}>{error}</span>}
             </div>
 
             <div className={styles.form__item}>
-                <label htmlFor="">パスワード</label>
+                <label htmlFor="password">パスワード</label>
                 <input
-                    type="text"
+                    id="password"
+                    type="password"
                     value={password}
                     placeholder="パスワードを入力してください"
                     onChange={(e) => setPassword(e.target.value)}
