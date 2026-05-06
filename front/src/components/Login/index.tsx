@@ -7,7 +7,6 @@ import { useAuth } from "@/context/auth";
 
 const Login = () => {
     const [libraryCardNumber, setLibraryCardNumber] = useState("");
-    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
     const router = useRouter();
@@ -33,7 +32,6 @@ const Login = () => {
         try {
             const response = await apiClient.post("/auth/login", {
                 libraryCardNumber,
-                password,
             });
 
             const token = response.data.token;
@@ -62,17 +60,6 @@ const Login = () => {
                     onChange={handleCardNumberChange}
                 />
                 {error && <span className={styles.form__error}>{error}</span>}
-            </div>
-
-            <div className={styles.form__item}>
-                <label htmlFor="password">パスワード</label>
-                <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    placeholder="パスワードを入力してください"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
             </div>
 
             <button className={styles.form__btn}>ログイン</button>

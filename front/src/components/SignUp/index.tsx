@@ -6,7 +6,6 @@ import router from "next/router";
 const SignUp = () => {
     const [username, setUserName] = useState("");
     const [libraryCardNumber, setLibraryCardNumber] = useState("");
-    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
     // 図書カード番号のバリデーション（6桁の数字のみ）
@@ -32,7 +31,6 @@ const SignUp = () => {
             await apiClient.post("/auth/register", {
                 username,
                 libraryCardNumber,
-                password,
             });
 
             router.push("/login");
@@ -71,17 +69,6 @@ const SignUp = () => {
                     onChange={handleCardNumberChange}
                 />
                 {error && <span className={styles.form__error}>{error}</span>}
-            </div>
-
-            <div className={styles.form__item}>
-                <label htmlFor="password">パスワード</label>
-                <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    placeholder="パスワードを入力してください"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
             </div>
 
             <button className={styles.form__btn}>新規登録</button>
