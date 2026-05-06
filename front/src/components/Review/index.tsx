@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./style.module.scss";
 import apiClient from "@/lib/apiClient";
-import { BookWithLatestPostType } from "@/types";
+import { LatestReviewType } from "@/types";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -9,19 +9,21 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
+import Avatar from "@mui/material/Avatar";
 
 const Review: React.FC = () => {
-    const [books, setBooks] = useState<BookWithLatestPostType[]>([]);
+    const [reviews, setReviews] = useState<LatestReviewType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchBooksWithLatestPost = async () => {
+        const fetchLatestReviews = async () => {
             try {
                 setIsLoading(true);
-                // バックエンドで最新投稿付きの本リストを取得
-                const response = await apiClient.get("/books/with-latest-post");
-                setBooks(response.data);
+                // バックエンド: GET /books/latest-reviewed?limit=5
+                // post.createdAt降順・bookId重複排除・最新5件を取得
+                const response = await apiClient.get("/books/latest-reviewed?limit=5");
+                setReviews(response.data);
                 setError(null);
             } catch (err) {
                 console.error("データの取得に失敗しました:", err);
@@ -31,10 +33,9 @@ const Review: React.FC = () => {
             }
         };
 
-        fetchBooksWithLatestPost();
+        fetchLatestReviews();
     }, []);
 
-    // 日付フォーマット
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString("ja-JP", {
@@ -65,11 +66,11 @@ const Review: React.FC = () => {
         );
     }
 
-    if (books.length === 0) {
+    if (reviews.length === 0) {
         return (
             <Box className={styles.review__empty}>
                 <Typography variant="body1" color="text.secondary">
-                    登録されている本がありません
+                    投稿がありません
                 </Typography>
             </Box>
         );
@@ -78,18 +79,18 @@ const Review: React.FC = () => {
     return (
         <Box className={styles.review}>
             <Typography variant="h5" component="h1" className={styles.review__title}>
-                レビュー一覧
+                最新の投稿
             </Typography>
 
             <Box className={styles.review__list}>
-                {books.map((book) => (
-                    <Card key={book.id} className={styles.review__card}>
-                        {book.imageUrl ? (
+                {reviews.map((review) => (
+                    <Card key={review.id} className={styles.review__card}>
+                        {review.book.imageUrl ? (
                             <CardMedia
                                 component="img"
                                 className={styles.review__cardImage}
-                                image={book.imageUrl}
-                                alt={book.title}
+                                image={review.book.imageUrl}
+                                alt={review.book.title}
                             />
                         ) : (
                             <Box className={styles.review__cardImagePlaceholder}>
@@ -105,36 +106,29 @@ const Review: React.FC = () => {
                                 component="h2"
                                 className={styles.review__bookTitle}
                             >
-                                {book.title}
+                                {review.book.title}
                             </Typography>
 
-                            {book.latestPost ? (
-                                <Box className={styles.review__latestPost}>
-                                    <Typography
-                                        variant="body2"
-                                        className={styles.review__postContent}
-                                    >
-                                        {book.latestPost.content}
-                                    </Typography>
+                            <Typography
+                                variant="body2"
+                                className={styles.review__postContent}
+                            >
+                                {review.content}
+                            </Typography>
 
-                                    <Box className={styles.review__postMeta}>
-                                        <Typography variant="caption" color="text.secondary">
-                                            {book.latestPost.author.username}
-                                        </Typography>
-                                        <Typography variant="caption" color="text.secondary">
-                                            {formatDate(book.latestPost.createdAt)}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            ) : (
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                    className={styles.review__noPost}
+                            <Box className={styles.review__postMeta}>
+                                <Avatar
+                                    sx={{ width: 24, height: 24, fontSize: 12, bgcolor: "#1976d2" }}
                                 >
-                                    まだ感想がありません
+                                    {review.author.username.charAt(0).toUpperCase()}
+                                </Avatar>
+                                <Typography variant="caption" color="text.secondary">
+                                    {review.author.username}
                                 </Typography>
-                            )}
+                                <Typography variant="caption" color="text.secondary">
+                                    {formatDate(review.createdAt)}
+                                </Typography>
+                            </Box>
                         </CardContent>
                     </Card>
                 ))}

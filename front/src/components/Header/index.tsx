@@ -18,6 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -122,6 +123,12 @@ const Header = () => {
                         <MenuBookIcon fontSize="small" />
                     </ListItemIcon>
                     本の登録
+                </MenuItem>
+                <MenuItem onClick={() => handleNavigate('/review-list')}>
+                    <ListItemIcon>
+                        <RateReviewIcon fontSize="small" />
+                    </ListItemIcon>
+                    最新の投稿
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={() => handleNavigate('/login')}>

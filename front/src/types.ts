@@ -50,19 +50,20 @@ export interface BookType {
     createdAt?: string;
 }
 
-// Review一覧ページ用の型（バックエンドから最新投稿付きで取得）
-export interface LatestPostType {
+// Review一覧ページ用の型
+// バックエンド: GET /books/latest-reviewed?limit=5
+// Prisma: post.findMany({ orderBy:{createdAt:'desc'}, take:5, distinct:['bookId'], include:{author,book} })
+export interface LatestReviewType {
+    id: number;
     content: string;
     createdAt: string;
     author: {
         id: number;
         username: string;
     };
-}
-
-export interface BookWithLatestPostType {
-    id: number;
-    title: string;
-    imageUrl?: string;
-    latestPost?: LatestPostType;
+    book: {
+        id: number;
+        title: string;
+        imageUrl?: string;
+    };
 }
