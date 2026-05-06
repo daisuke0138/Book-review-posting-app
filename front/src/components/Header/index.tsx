@@ -18,6 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -70,7 +71,7 @@ const Header = () => {
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
                     >
-                        <Avatar sx={{ width: 32, height: 32, bgcolor: '#f7edb7' }}>M</Avatar>
+                        <Avatar sx={{ width: 32, height: 32, bgcolor: '#eae6a8' }}>M</Avatar>
                     </IconButton>
                 </Tooltip>
             </Box>
@@ -115,7 +116,13 @@ const Header = () => {
                     <ListItemIcon>
                         <HomeIcon fontSize="small" />
                     </ListItemIcon>
-                    TOP
+                    感想の投稿
+                </MenuItem>
+                <MenuItem onClick={() => handleNavigate('/review-list')}>
+                    <ListItemIcon>
+                        <RateReviewIcon fontSize="small" />
+                    </ListItemIcon>
+                    最新の投稿
                 </MenuItem>
                 <MenuItem onClick={() => handleNavigate('/b-register')}>
                     <ListItemIcon>

@@ -2,40 +2,58 @@ import React, { useState } from "react";
 import styles from "./style.module.scss";
 import Link from "next/link";
 import apiClient from "@/lib/apiClient";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useAuth } from "@/context/auth";
 
 const Login = () => {
-    // useState　各フォームの入力を保持します🤗
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [libraryCardNumber, setLibraryCardNumber] = useState("");
+    const [errors, setErrors] = useState<{ username?: string; libraryCardNumber?: string }>({});
 
     const router = useRouter();
-
-    // 呼び出し追記
     const { login } = useAuth();
 
-    // 送信の処理を記述します🤗
+    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(e.target.value);
+        setErrors((prev) => ({ ...prev, username: undefined }));
+    };
+
+    const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (/^\d{0,6}$/.test(value)) {
+            setLibraryCardNumber(value);
+            setErrors((prev) => ({ ...prev, libraryCardNumber: undefined }));
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        //新規登録を行うAPIを叩く
+        const newErrors: { username?: string; libraryCardNumber?: string } = {};
+
+        if (!username.trim()) {
+            newErrors.username = "ニックネームを入力してください";
+        }
+        if (libraryCardNumber.length !== 6) {
+            newErrors.libraryCardNumber = "図書カード番号は6桁の数字で入力してください";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
         try {
             const response = await apiClient.post("/auth/login", {
-                email,
-                password,
+                username,
+                libraryCardNumber,
             });
 
             const token = response.data.token;
-            console.log(token);
-
-            // ここで使用する
             login(token);
 
             router.push("/");
         } catch (err) {
-            alert("入力内容が正しくありません。");
+            setErrors({ username: "お名前または図書カード番号が正しくありません" });
         }
     };
 
@@ -44,23 +62,30 @@ const Login = () => {
             <h3 className={styles.form__title}>ログイン</h3>
 
             <div className={styles.form__item}>
-                <label htmlFor="">メールアドレス</label>
+                <label htmlFor="username">お名前</label>
                 <input
+                    id="username"
                     type="text"
-                    value={email}
-                    placeholder="メールアドレスを入力してください"
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={username}
+                    placeholder="お名前を入力してください"
+                    onChange={handleUsernameChange}
                 />
+                {errors.username && <span className={styles.form__error}>{errors.username}</span>}
             </div>
 
             <div className={styles.form__item}>
-                <label htmlFor="">パスワード</label>
+                <label htmlFor="libraryCardNumber">図書カード番号（6桁）</label>
                 <input
+                    id="libraryCardNumber"
                     type="text"
-                    value={password}
-                    placeholder="パスワードを入力してください"
-                    onChange={(e) => setPassword(e.target.value)}
+                    inputMode="numeric"
+                    pattern="\d{6}"
+                    maxLength={6}
+                    value={libraryCardNumber}
+                    placeholder="123456"
+                    onChange={handleCardNumberChange}
                 />
+                {errors.libraryCardNumber && <span className={styles.form__error}>{errors.libraryCardNumber}</span>}
             </div>
 
             <button className={styles.form__btn}>ログイン</button>

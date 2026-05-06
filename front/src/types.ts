@@ -49,3 +49,21 @@ export interface BookType {
     imageUrl?: string;
     createdAt?: string;
 }
+
+// Review一覧ページ用の型
+// バックエンド: GET /books/latest-reviewed?limit=5
+// Prisma: post.findMany({ orderBy:{createdAt:'desc'}, take:5, distinct:['bookId'], include:{author,book} })
+export interface LatestReviewType {
+    id: number;
+    content: string;
+    createdAt: string;
+    author: {
+        id: number;
+        username: string;
+    };
+    book: {
+        id: number;
+        title: string;
+        imageUrl?: string;
+    };
+}
