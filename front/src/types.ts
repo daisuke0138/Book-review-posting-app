@@ -1,9 +1,8 @@
 // model User {
-//   id        Int      @id @default(autoincrement())
-//   username   String
-//   email   String @unique
-//   password   String
-//   post Post[]
+//   id                Int      @id @default(autoincrement())
+//   username          String   @unique
+//   libraryCardNumber String   @unique
+//   post              Post[]
 // }
 
 // model Post {
@@ -17,9 +16,8 @@
 export interface UserType {
     id: number;
     username: string;
-    email: string;
-    password: number;
-    post: PostType[];
+    libraryCardNumber: string;
+    post?: PostType[];
 }
 
 export interface PostType {
