@@ -6,24 +6,34 @@ import router from "next/router";
 const SignUp = () => {
     const [username, setUserName] = useState("");
     const [libraryCardNumber, setLibraryCardNumber] = useState("");
-    const [error, setError] = useState("");
+    const [errors, setErrors] = useState<{ username?: string; libraryCardNumber?: string }>({});
 
-    // 図書カード番号のバリデーション（6桁の数字のみ）
     const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        // 数字のみ許可、最大6桁
         if (/^\d{0,6}$/.test(value)) {
             setLibraryCardNumber(value);
-            setError("");
+            setErrors((prev) => ({ ...prev, libraryCardNumber: undefined }));
         }
+    };
+
+    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUserName(e.target.value);
+        setErrors((prev) => ({ ...prev, username: undefined }));
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // バリデーションチェック
+        const newErrors: { username?: string; libraryCardNumber?: string } = {};
+
+        if (!username.trim()) {
+            newErrors.username = "お名前を入力してください";
+        }
         if (libraryCardNumber.length !== 6) {
-            setError("図書カード番号は6桁の数字で入力してください");
+            newErrors.libraryCardNumber = "図書カード番号は6桁の数字で入力してください";
+        }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
             return;
         }
 
@@ -34,13 +44,20 @@ const SignUp = () => {
             });
 
             router.push("/login");
-            
-        } catch (err) {
-            console.log(err);
-            alert("入力の何かが正しくありません！");
+
+        } catch (err: any) {
+            // バックエンドからの重複エラーを各フィールドに振り分け
+            const message: string = err?.response?.data?.message ?? "";
+            if (message.includes("username") || message.includes("名前")) {
+                setErrors((prev) => ({ ...prev, username: "このお名前はすでに登録されています" }));
+            } else if (message.includes("libraryCardNumber") || message.includes("図書カード")) {
+                setErrors((prev) => ({ ...prev, libraryCardNumber: "この図書カード番号はすでに登録されています" }));
+            } else {
+                setErrors({ username: "入力内容に誤りがあります。確認してください" });
+            }
         }
     };
-    
+
     return (
         <form className={styles.form} onSubmit={handleSubmit}>
             <h3 className={styles.form__title}>アカウントを作成</h3>
@@ -52,8 +69,9 @@ const SignUp = () => {
                     type="text"
                     value={username}
                     placeholder="お名前を入力してください"
-                    onChange={(e) => setUserName(e.target.value)}
+                    onChange={handleUsernameChange}
                 />
+                {errors.username && <span className={styles.form__error}>{errors.username}</span>}
             </div>
 
             <div className={styles.form__item}>
@@ -68,7 +86,7 @@ const SignUp = () => {
                     placeholder="123456"
                     onChange={handleCardNumberChange}
                 />
-                {error && <span className={styles.form__error}>{error}</span>}
+                {errors.libraryCardNumber && <span className={styles.form__error}>{errors.libraryCardNumber}</span>}
             </div>
 
             <button className={styles.form__btn}>新規登録</button>
