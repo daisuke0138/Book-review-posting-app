@@ -49,3 +49,20 @@ export interface BookType {
     imageUrl?: string;
     createdAt?: string;
 }
+
+// Review一覧ページ用の型（バックエンドから最新投稿付きで取得）
+export interface LatestPostType {
+    content: string;
+    createdAt: string;
+    author: {
+        id: number;
+        username: string;
+    };
+}
+
+export interface BookWithLatestPostType {
+    id: number;
+    title: string;
+    imageUrl?: string;
+    latestPost?: LatestPostType;
+}
